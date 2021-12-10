@@ -15,12 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bruteslope.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="677">
-              <caret line="284" column="68" lean-forward="true" selection-start-line="284" selection-start-column="68" selection-end-line="284" selection-end-column="68" />
+            <state relative-caret-position="660">
+              <caret line="336" lean-forward="true" selection-start-line="336" selection-end-line="336" />
               <folding>
                 <element signature="e#10#21#0" expanded="true" />
                 <element signature="e#1111#1365#0" />
-                <element signature="e#1453#3365#0" />
                 <element signature="e#4586#4817#0" />
                 <element signature="e#4852#4971#0" />
                 <element signature="e#5011#5177#0" />
@@ -75,8 +74,8 @@
       <find>point</find>
       <find>intersection_point</find>
       <find>plot</find>
-      <find>print</find>
       <find>line_s</find>
+      <find>print</find>
     </findStrings>
     <replaceStrings>
       <replace>slope_angle</replace>
@@ -209,12 +208,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bruteslope.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="677">
-          <caret line="284" column="68" lean-forward="true" selection-start-line="284" selection-start-column="68" selection-end-line="284" selection-end-column="68" />
+        <state relative-caret-position="660">
+          <caret line="336" lean-forward="true" selection-start-line="336" selection-end-line="336" />
           <folding>
             <element signature="e#10#21#0" expanded="true" />
             <element signature="e#1111#1365#0" />
-            <element signature="e#1453#3365#0" />
             <element signature="e#4586#4817#0" />
             <element signature="e#4852#4971#0" />
             <element signature="e#5011#5177#0" />
