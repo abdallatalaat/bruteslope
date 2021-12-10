@@ -18,10 +18,14 @@ class Cohesive_slope:
         self.slope_coordinates = slope_coor
         self.radius = radius
 
+        self.poly_coordinates = []
+        self.areas = [] # list of lists; each list has [0]: area, [1]: coordinate tuple
+
         self.type = self.determine_type()
 
         self.circle_cg, self.circle_angle = get_circle_centre(self.coordinates, radius)
-        self.areas = self.get_areas() # list of lists; each list has [0]: area, [1]: coordinate tuple
+        self.get_areas()
+
         self.cd = self.calculate_cd()
         self.stability_number = self.cd / (self.density * self.h)
 
@@ -40,13 +44,18 @@ class Cohesive_slope:
         else: return "Slope"
 
     def get_areas(self):
+
+
         if self.circle_cg[0] < self.coordinates[0][0]:
             # No Resisting Areas
             segment = deal_with_arcs(self.coordinates, self.radius)
             poly_coor = [self.coordinates[0], self.slope_coordinates[1], self.coordinates[1]]
             poly = [poly_area_calculation(poly_coor), get_cg(poly_coor)]
 
-            return [segment, poly]
+            self.poly_coordinates = poly_coor
+            self.areas = [segment, poly]
+            return
+
         else:
             int_coor = [intersection_point([self.circle_cg, [self.circle_cg[0], -100*self.radius]], self.slope_coordinates),
                         [self.circle_cg[0], self.circle_cg[1]-self.radius]]
@@ -64,7 +73,9 @@ class Cohesive_slope:
                 res_poly_coor = [self.coordinates[0], int_coor[0], int_coor[1]]
                 res_poly = [poly_area_calculation(res_poly_coor), get_cg(res_poly_coor)]
 
-                return [segment, poly, res_segment, res_poly]
+                self.areas = [segment, poly, res_segment, res_poly]
+                self.poly_coordinates = [self.coordinates[0]]+poly_coor
+                return
 
             else:
                 # Resisting areas
@@ -72,7 +83,9 @@ class Cohesive_slope:
                 res_poly_coor = [self.coordinates[0], (0.0,0.0), int_coor[0], int_coor[1]]
                 res_poly = [poly_area_calculation(res_poly_coor), get_cg(res_poly_coor)]
 
-                return [segment, poly, res_segment, res_poly]
+                self.areas = [segment, poly, res_segment, res_poly]
+                self.poly_coordinates = [self.coordinates[0], (0.0,0.0)]+poly_coor
+                return
 
     def calculate_cd(self):
         moment = 0
@@ -81,19 +94,23 @@ class Cohesive_slope:
         return self.density * moment / (self.circle_angle * self.radius**2)
 
     def plot_slope(self, color="grey", width=0.5, style="dashed"):
-        theta_1 = line_slope([self.coordinates[0], self.circle_cg]) + np.pi
-        theta_2 = line_slope([self.circle_cg, self.coordinates[1]]) + 2*np.pi
-
-        if theta_1 < np.pi: theta_1 += np.pi
-
-        theta = np.linspace(theta_1,theta_2,100)
-
-        x = self.radius * np.cos(theta) + self.circle_cg[0]
-        y = self.radius * np.sin(theta) + self.circle_cg[1]
-        plt.plot(x,y, color, linewidth=width, linestyle=style)
+        plot_arc(self.coordinates,self.circle_cg,self.radius,color,width,style)
 
 
 # Helper Functions
+
+def plot_arc(points, cg, radius, color="grey", width=0.5, style="dashed"):
+    theta_1 = line_slope([points[0], cg]) + np.pi
+    theta_2 = line_slope([cg, points[1]]) + 2 * np.pi
+
+    if theta_1 < np.pi: theta_1 += np.pi
+
+    theta = np.linspace(theta_1, theta_2, 100)
+
+    x = radius * np.cos(theta) + cg[0]
+    y = radius * np.sin(theta) + cg[1]
+    plt.plot(x, y, color, linewidth=width, linestyle=style)
+
 
 
 def get_circle_centre(points, radius):
@@ -258,23 +275,16 @@ radius_range = np.arange(r_min, r_max, r_step)
 slopes, critical_slope, slope_coor = generate_failures(DATA['h'], DATA['slope_angle'],50,5, radius_range)
 
 
-print("\ndrawing slopes..")
-for slope in slopes:
-    slope.plot_slope("grey", 0.5, "dashed")
-
-
+print("\ndrawing slope..")
 critical_slope.plot_slope("blue", 1.5, "solid")
 
 print(critical_slope)
 
 
 
-
-
-#
 # mySlope = Cohesive_slope(45,10,0,18,[(0,0),(13,10)],slope_coor,15)
 # mySlope.plot_slope(color="blue")
-#
+
 
 plt.plot([slope_coor[0][0] - 10, slope_coor[0][0], slope_coor[1][0], slope_coor[1][0] + 10],
          [slope_coor[0][1], slope_coor[0][1], slope_coor[1][1], slope_coor[1][1]],
