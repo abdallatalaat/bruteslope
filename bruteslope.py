@@ -29,6 +29,7 @@ class Cohesive_slope:
 
     def __str__(self):
         msg = "\nType: " + self.type
+        msg = msg + "\nINTERSECTION COORDINATES: ({:.2f}, {:.2f}), ({:.2f}, {:.2f})".format(self.coordinates[0][0], self.coordinates[0][1], self.coordinates[1][0], self.coordinates[1][1])
         msg = msg + "\ncircle cg: " + str(self.circle_cg)
         msg = msg + "\ncircle radius: " + str(self.radius)
         msg = msg + "\ncircle angle: " + str(self.circle_angle*180/np.pi)
@@ -246,26 +247,22 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
     :param height: vertical height
     :param slope_angle: soil angle IN DEGREES
     :param steps_number: number of steps
-    :param half_horiz: horizontal surveyed distance before and after the slope.
+    :param half_horiz: horizontal surveyed distance before and after the slope [left, right].
     :param radius_range: linespace of radii
     :return: list of Cohesive_slope objects, the critical slope, and the slope coordinates
     """
-    land_coor = [(-1.0*half_horiz, 0.0),
+    land_coor = [(-1.0*half_horiz[0], 0.0),
                  (0.0, 0.0),
                  (height / math.tan(math.radians(slope_angle)), height),
-                 ((height / math.tan(math.radians(slope_angle)))+half_horiz, height)]
-
-    horizontal_step = (2*half_horiz + (height / math.tan(math.radians(slope_angle))))/steps_number
+                 ((height / math.tan(math.radians(slope_angle)))+half_horiz[1], height)]
 
     cd_critical = float('-inf')
-    slopes = []
     critical_slope = None
 
-    horiz_steps = np.linspace(-1.0*half_horiz, (height / math.tan(math.radians(slope_angle)))+half_horiz, steps_number)
+    horiz_steps = np.linspace(-1.0*half_horiz[0], (height / math.tan(math.radians(slope_angle)))+half_horiz[1], steps_number)
     if 0 not in horiz_steps: horiz_steps = np.append(horiz_steps, [0])
     if land_coor[2][0] not in horiz_steps: horiz_steps = np.append(horiz_steps, [land_coor[2][0]])
 
-    print(horiz_steps)
 
     for radius in radius_range:
         print(" Computing all possible circles of radius {:.5f}".format(radius))
@@ -288,14 +285,57 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
                 if iter_slope.type=="Base" and distance((0, 0), iter_slope.circle_cg) > radius: continue
                 if iter_slope.circle_cg[0] < 0: continue
 
-                slopes.append(iter_slope)
                 if iter_slope.cd > cd_critical:
                     critical_slope = iter_slope
                     cd_critical = critical_slope.cd
 
-    return slopes, critical_slope, slope_coor
+    return critical_slope
 
 
+
+
+def smart_sloper(angle, height, iterations):
+    """
+    semi-optimization of brute force
+    :param angle: in degree
+    :param height: height
+    :param iterations: no of iterations
+    :return: critical slope
+    """
+
+    left = height
+    right = height
+    r_max = 60 * height
+    r_min = 0
+
+    cd_crit = float('-inf')
+    critical_s = None
+
+    for i in range(1,iterations+1):
+        print("\niteration ", i)
+
+        print("LEFT, RIGHT ", left, right)
+        print("RMIN, RMAX ", r_min, r_max)
+        print('\n\n')
+        print(critical_s)
+        print('\n')
+
+        radius_range = np.arange(r_min, r_max, (r_max-r_min)/(50*(1+1/i)))
+
+        crit_iter = generate_failures(height, angle, int(25*(1.1+2/i)), [left, right], radius_range)
+        if crit_iter.cd > cd_crit:
+            cd_crit = crit_iter.cd
+            critical_s = crit_iter
+
+        left = max(-1*critical_s.coordinates[0][0] + (height)*(1.1-1/i), 0)
+        right = critical_s.coordinates[1][0] - critical_s.slope_coordinates[1][0] + (height)*(1.1-1/i)
+
+        r_max = critical_s.radius* (1.1+1/i)
+        r_min = critical_s.radius * (1.1-1/i)
+
+
+
+    return critical_s
 
 
 
@@ -307,31 +347,36 @@ fig = plt.figure()
 slope_coor = [(0.0, 0.0), (DATA['h'] / math.tan(math.radians(DATA['slope_angle'])), DATA['h'])]
 
 
-r_step = 0.001
-r_min = 14
-r_max = 15
-half_horiz = 15
-
-
-radius_range = np.arange(r_min, r_max, r_step)
-
-slopes, critical_slope, slope_coor = generate_failures(DATA['h'], DATA['slope_angle'],200,half_horiz, radius_range)
-
-
-print("\ndrawing slope..")
-
-
-critical_slope.plot_slope("blue", 1.5, "solid")
-print("\n\n")
-print(critical_slope)
+# r_step = 0.01
+# r_min = 14
+# r_max = 15
+# half_horiz = 15
+#
+#
+# radius_range = np.arange(r_min, r_max, r_step)
+#
+# slopes, critical_slope, slope_coor = generate_failures(DATA['h'], DATA['slope_angle'],100,half_horiz, radius_range)
+#
+#
+# print("\ndrawing slope..")
+#
+#
+# critical_slope.plot_slope("blue", 1.5, "solid")
+# print("\n\n")
+# print(critical_slope)
 
 
 #
 # mySlope = Cohesive_slope(60,10,0,18,[(0,0),(15,10)], slope_coor,10)
 # mySlope.plot_slope(color="blue")
 
+crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
 
-plt.plot([slope_coor[0][0] - half_horiz-2, slope_coor[0][0], slope_coor[1][0], slope_coor[1][0] + half_horiz+2],
+crit.plot_slope(color="blue")
+
+print(crit)
+
+plt.plot([slope_coor[0][0] - 2*DATA['h']-2, slope_coor[0][0], slope_coor[1][0], slope_coor[1][0] + 2*DATA['h']+2],
          [slope_coor[0][1], slope_coor[0][1], slope_coor[1][1], slope_coor[1][1]],
          "black", linewidth=3)
 
