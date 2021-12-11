@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5c5c0082-b9f3-4e8f-84b7-77fa097a5e54" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bruteslope.py" beforeDir="false" afterPath="$PROJECT_DIR$/bruteslope.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,14 +16,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bruteslope.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="556">
-              <caret line="324" column="59" selection-start-line="324" selection-start-column="59" selection-end-line="324" selection-end-column="59" />
+            <state relative-caret-position="566">
+              <caret line="390" selection-start-line="390" selection-end-line="390" />
               <folding>
                 <element signature="e#10#21#0" expanded="true" />
-                <element signature="e#4586#4817#0" />
-                <element signature="e#4852#4971#0" />
-                <element signature="e#5011#5177#0" />
-                <element signature="e#5220#6288#0" />
               </folding>
             </state>
           </provider>
@@ -33,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="68">
-              <caret line="4" column="8" lean-forward="true" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+              <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -41,8 +37,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Columb/columb/columb.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="639">
-              <caret line="636" column="59" lean-forward="true" selection-start-line="636" selection-start-column="12" selection-end-line="636" selection-end-column="59" />
+            <state relative-caret-position="8993">
+              <caret line="636" column="59" selection-start-line="636" selection-start-column="12" selection-end-line="636" selection-end-column="59" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <element signature="e#296#1475#0" />
@@ -208,8 +204,8 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/../Columb/columb/columb.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="639">
-          <caret line="636" column="59" lean-forward="true" selection-start-line="636" selection-start-column="12" selection-end-line="636" selection-end-column="59" />
+        <state relative-caret-position="8993">
+          <caret line="636" column="59" selection-start-line="636" selection-start-column="12" selection-end-line="636" selection-end-column="59" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <element signature="e#296#1475#0" />
@@ -225,20 +221,16 @@
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="4" column="8" lean-forward="true" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+          <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bruteslope.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="556">
-          <caret line="324" column="59" selection-start-line="324" selection-start-column="59" selection-end-line="324" selection-end-column="59" />
+        <state relative-caret-position="566">
+          <caret line="390" selection-start-line="390" selection-end-line="390" />
           <folding>
             <element signature="e#10#21#0" expanded="true" />
-            <element signature="e#4586#4817#0" />
-            <element signature="e#4852#4971#0" />
-            <element signature="e#5011#5177#0" />
-            <element signature="e#5220#6288#0" />
           </folding>
         </state>
       </provider>

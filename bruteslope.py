@@ -4,8 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Global Variables
-DATA = {'slope_angle': 60, 'h': 10, 'coordinates': [(0,0), (15,10)]}
-
+DATA = {'slope_angle': 80, 'h': 10, 'coordinates': [(0,0), (15,10)]}
+POTATO = []
 # Classes
 
 class Cohesive_slope:
@@ -251,6 +251,9 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
     :param radius_range: linespace of radii
     :return: list of Cohesive_slope objects, the critical slope, and the slope coordinates
     """
+
+    global  POTATO
+
     land_coor = [(-1.0*half_horiz[0], 0.0),
                  (0.0, 0.0),
                  (height / math.tan(math.radians(slope_angle)), height),
@@ -283,11 +286,13 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
                 iter_slope = Cohesive_slope(slope_angle,height,0,18,arc_coordinates,slope_coor,radius)
 
                 if iter_slope.type=="Base" and distance((0, 0), iter_slope.circle_cg) > radius: continue
-                if iter_slope.circle_cg[0] < 0: continue
+                if iter_slope.circle_cg[0] < 0 and iter_slope.type=="Base": continue
 
                 if iter_slope.cd > cd_critical:
                     critical_slope = iter_slope
                     cd_critical = critical_slope.cd
+
+                POTATO.append([slope_angle, radius/height, iter_slope.coordinates[0][0]/height, iter_slope.stability_number])
 
     return critical_slope
 
@@ -369,18 +374,31 @@ slope_coor = [(0.0, 0.0), (DATA['h'] / math.tan(math.radians(DATA['slope_angle']
 #
 # mySlope = Cohesive_slope(60,10,0,18,[(0,0),(15,10)], slope_coor,10)
 # mySlope.plot_slope(color="blue")
+#
+# crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
+#
+# crit.plot_slope(color="blue")
+#
+# print(crit)
+#
+# plt.plot([slope_coor[0][0] - 2*DATA['h']-2, slope_coor[0][0], slope_coor[1][0], slope_coor[1][0] + 2*DATA['h']+2],
+#          [slope_coor[0][1], slope_coor[0][1], slope_coor[1][1], slope_coor[1][1]],
+#          "black", linewidth=3)
+#
+#
+# plt.gca().set_aspect('equal', adjustable='box')
+# plt.show()
 
-crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
+for angle in range(60,81,5):
+    DATA['slope_angle'] = angle
+    crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
 
-crit.plot_slope(color="blue")
+f = open("data.csv",'w')
 
-print(crit)
+f.write("angle, radius/h, n, stability number\n")
 
-plt.plot([slope_coor[0][0] - 2*DATA['h']-2, slope_coor[0][0], slope_coor[1][0], slope_coor[1][0] + 2*DATA['h']+2],
-         [slope_coor[0][1], slope_coor[0][1], slope_coor[1][1], slope_coor[1][1]],
-         "black", linewidth=3)
+for pot in POTATO:
+    f.write("{:.6f}, {:.6f}, {:.6f}, {:.6f}\n".format(pot[0],pot[1],pot[2],pot[3]))
 
 
-plt.gca().set_aspect('equal', adjustable='box')
-plt.show()
-
+f.close()
