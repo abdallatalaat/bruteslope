@@ -15,7 +15,7 @@ class Cohesive_slope:
         self.slope_angle = slope_angle
         self.h = h
         self.density = density
-        self.coordinates = coordinates # list of two tuples (two intersection points with the ground)
+        self.coordinates = list(coordinates) # list of two tuples (two intersection points with the ground)
         self.below_depth = below_depth # depth to the stratum below from the top
         self.slope_coordinates = slope_coor
         self.radius = radius
@@ -249,6 +249,19 @@ def intersection_point(line1, line2):
     if not isBetween(solution, line1): return None
 
     return solution
+
+def intersects_land(point, slope, slope_angle):
+    if point[0] > slope[1][0]:
+        if point[1] < slope[1][1]: return False
+
+    elif point[0] > 0:
+        if point[1] < point[0] * math.tan(math.radians(slope_angle)): return False
+
+    elif point[0] <= 0:
+        if point[1] < 0: return False
+
+    return True
+
 def line_slope(line):
     """
     :param line: list of two points
@@ -278,6 +291,9 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
                  (height / math.tan(math.radians(slope_angle)), height),
                  ((height / math.tan(math.radians(slope_angle)))+half_horiz[1], height)]
 
+    slope_coor = [(0.0, 0.0),
+                 (height / math.tan(math.radians(slope_angle)), height)]
+
     cd_critical = float('-inf')
     critical_slope = None
 
@@ -306,6 +322,8 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
 
                 if distance((0, 0), iter_slope.circle_cg) > radius: continue
                 if (iter_slope.circle_cg[1] - radius > iter_slope.circle_cg[0] * math.tan(math.radians(slope_angle))) and iter_slope.circle_cg[0] > 0: continue
+
+
 
                 if iter_slope.cd > cd_critical:
                     critical_slope = iter_slope
@@ -367,8 +385,6 @@ def smart_sloper(angle, height, iterations):
 
 
 # fig = plt.figure()
-
-slope_coor = [(0.0, 0.0), (DATA['h'] / math.tan(math.radians(DATA['slope_angle'])), DATA['h'])]
 
 
 # r_step = 0.01
@@ -432,8 +448,9 @@ crits = []
 for angle in range(10,81,5):
     print("\n\nGenerating for slope angle ", angle)
     DATA['slope_angle'] = angle
-    crit = generate_failures(DATA['h'], DATA['slope_angle'], 150, [30, 30], radius_range)
+    crit = generate_failures(DATA['h'], DATA['slope_angle'], 50, [30, 30], radius_range)
 
+    print('\n\n', crit, '\n\n')
     crits.append((angle, crit.stability_number))
 
 
