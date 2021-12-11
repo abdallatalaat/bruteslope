@@ -4,8 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Global Variables
-DATA = {'slope_angle': 80, 'h': 10, 'coordinates': [(0,0), (15,10)]}
+DATA = {'slope_angle': 40, 'h': 10, 'coordinates': [(0,0), (15,10)]}
 POTATO = []
+
+
 # Classes
 
 class Cohesive_slope:
@@ -54,7 +56,7 @@ class Cohesive_slope:
             # No Resisting Areas
             segment = deal_with_arcs(self.coordinates, self.radius)
             poly_coor = [self.coordinates[0], self.slope_coordinates[1], self.coordinates[1]]
-            poly = [poly_area_calculation(poly_coor), get_cg(poly_coor)]
+            poly = poly_area_calculation(poly_coor)
 
             self.poly_coordinates = poly_coor
             areas = [segment, poly]
@@ -65,18 +67,21 @@ class Cohesive_slope:
             int_coor = [intersection_point([self.circle_cg, [self.circle_cg[0], -100*self.radius]], self.slope_coordinates),
                         [self.circle_cg[0], self.circle_cg[1]-self.radius]]
 
+            if self.circle_cg[0] < 0: int_coor[0] = (self.circle_cg[0], 0)
+
 
             # Acting Areas
             segment= deal_with_arcs([int_coor[1], self.coordinates[1]], self.radius)
-            poly_coor = [int_coor[0], int_coor[1], self.coordinates[1], self.slope_coordinates[1]]
+            poly_coor = [int_coor[0], int_coor[1], self.coordinates[1]]
+            if self.coordinates[1] > self.slope_coordinates[1]: poly_coor.append(self.slope_coordinates[1])
 
-            poly = [poly_area_calculation(poly_coor), get_cg(poly_coor)]
+            poly = poly_area_calculation(poly_coor)
 
             if self.type == "Slope":
                 # Resisting areas
                 res_segment = deal_with_arcs([self.coordinates[0], int_coor[1]], self.radius)
                 res_poly_coor = [self.coordinates[0], int_coor[0], int_coor[1]]
-                res_poly = [poly_area_calculation(res_poly_coor), get_cg(res_poly_coor)]
+                res_poly = poly_area_calculation(res_poly_coor)
 
                 areas = [segment, poly, res_segment, res_poly]
 
@@ -84,7 +89,7 @@ class Cohesive_slope:
                 # Resisting areas
                 res_segment = deal_with_arcs([self.coordinates[0], int_coor[1]], self.radius)
                 res_poly_coor = [self.coordinates[0], (0.0,0.0), int_coor[0], int_coor[1]]
-                res_poly = [poly_area_calculation(res_poly_coor), get_cg(res_poly_coor)]
+                res_poly = poly_area_calculation(res_poly_coor)
 
                 areas = [segment, poly, res_segment, res_poly]
 
@@ -174,15 +179,29 @@ def deal_with_arcs(points, radius):
 
     return [area, segment_cg]
 
-def poly_area_calculation(list_of_coordinates):
-    """takes a list of 2D-coordinates(tuples) and reutrns area"""
-    if len(list_of_coordinates) == 0: return 0
+def poly_area_calculation(points):
+    """gets Area and CG"""
+    l = len(points)
+    if len(points) < 3: raise ValueError('NOT SUFFICIENT POINTS!')
+
+    sum = [0, 0]
     area = 0
-    l = len(list_of_coordinates)
-    for iter in range(l-1):
-        area = area + list_of_coordinates[iter][0]*list_of_coordinates[iter+1][1] - list_of_coordinates[iter][1]*list_of_coordinates[iter+1][0]
-    area = area + list_of_coordinates[l-1][0]*list_of_coordinates[0][1] - list_of_coordinates[l-1][1]*list_of_coordinates[0][0]
-    return abs(area/2)
+
+    for i in range(l):
+        j = i + 1
+        if i == l - 1: j = 0
+
+        m = points[i][0]*points[j][1] - points[j][0]*points[i][1]
+        sum[0] += (points[i][0]+points[j][0]) * m
+        sum[1] += (points[i][1]+points[j][1]) * m
+        area += m
+
+    area = 0.5 * area
+    sum[0] = sum[0]/(6*area)
+    sum[1] = sum[1]/(6*area)
+
+    return [abs(area), (sum[0], sum[1])]
+
 def get_cg(list_of_coordinates):
     """gets CG of list of coordinates"""
     l = len(list_of_coordinates)
@@ -268,7 +287,7 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
 
 
     for radius in radius_range:
-        print(" Computing all possible circles of radius {:.5f}".format(radius))
+        print("ANGLE ({:.1f}) Computing all possible circles of radius {:.5f}".format(slope_angle, radius))
         for i in horiz_steps:
             for j in horiz_steps:
                 if j <= i or j < 0: continue
@@ -285,8 +304,8 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
 
                 iter_slope = Cohesive_slope(slope_angle,height,0,18,arc_coordinates,slope_coor,radius)
 
-                if iter_slope.type=="Base" and distance((0, 0), iter_slope.circle_cg) > radius: continue
-                if iter_slope.circle_cg[0] < 0 and iter_slope.type=="Base": continue
+                if distance((0, 0), iter_slope.circle_cg) > radius: continue
+                if (iter_slope.circle_cg[1] - radius > iter_slope.circle_cg[0] * math.tan(math.radians(slope_angle))) and iter_slope.circle_cg[0] > 0: continue
 
                 if iter_slope.cd > cd_critical:
                     critical_slope = iter_slope
@@ -308,9 +327,9 @@ def smart_sloper(angle, height, iterations):
     :return: critical slope
     """
 
-    left = height
-    right = height
-    r_max = 60 * height
+    left = 10*height
+    right = 10*height
+    r_max = 30 * height
     r_min = 0
 
     cd_crit = float('-inf')
@@ -347,7 +366,7 @@ def smart_sloper(angle, height, iterations):
 
 
 
-fig = plt.figure()
+# fig = plt.figure()
 
 slope_coor = [(0.0, 0.0), (DATA['h'] / math.tan(math.radians(DATA['slope_angle'])), DATA['h'])]
 
@@ -375,8 +394,12 @@ slope_coor = [(0.0, 0.0), (DATA['h'] / math.tan(math.radians(DATA['slope_angle']
 # mySlope = Cohesive_slope(60,10,0,18,[(0,0),(15,10)], slope_coor,10)
 # mySlope.plot_slope(color="blue")
 #
-# crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
-#
+#crit = smart_sloper(DATA['slope_angle'], DATA['h'], 6)
+
+radius_range = np.arange(0, 5*DATA['h'], 0.5)
+
+# crit = generate_failures(DATA['h'], DATA['slope_angle'],150,[30,30], radius_range)
+
 # crit.plot_slope(color="blue")
 #
 # print(crit)
@@ -385,20 +408,54 @@ slope_coor = [(0.0, 0.0), (DATA['h'] / math.tan(math.radians(DATA['slope_angle']
 #          [slope_coor[0][1], slope_coor[0][1], slope_coor[1][1], slope_coor[1][1]],
 #          "black", linewidth=3)
 #
+# crit.plot_poly()
 #
 # plt.gca().set_aspect('equal', adjustable='box')
 # plt.show()
 
-for angle in range(60,81,5):
-    DATA['slope_angle'] = angle
-    crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
+# for angle in range(60,64,5):
+#     DATA['slope_angle'] = angle
+#     crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
 
-f = open("data.csv",'w')
+# f = open("data.csv",'a')
+#
+# f.write("angle, radius/h, n, stability number\n")
+#
+# for pot in POTATO:
+#     f.write("{:.6f}, {:.6f}, {:.6f}, {:.6f}\n".format(pot[0],pot[1],pot[2],pot[3]))
+#
+#
+# f.close()
+
+crits = []
+
+for angle in range(10,81,5):
+    print("\n\nGenerating for slope angle ", angle)
+    DATA['slope_angle'] = angle
+    crit = generate_failures(DATA['h'], DATA['slope_angle'], 150, [30, 30], radius_range)
+
+    crits.append((angle, crit.stability_number))
+
+
+print("\nsaving..")
+
+f = open("ms.csv",'w')
 
 f.write("angle, radius/h, n, stability number\n")
 
 for pot in POTATO:
     f.write("{:.6f}, {:.6f}, {:.6f}, {:.6f}\n".format(pot[0],pot[1],pot[2],pot[3]))
+
+
+f.close()
+
+
+f = open("taylor.csv",'w')
+
+f.write("angle, stability number\n")
+
+for c in crits:
+    f.write("{:.6f}, {:.6f}\n".format(c[0],c[1]))
 
 
 f.close()
