@@ -4,16 +4,33 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Global Variables
-DATA = {'slope_angle': 40, 'h': 10, 'coordinates': [(0,0), (15,10)]}
-POTATO = []
+HEIGHT = 10
+SLOPE = 65
+M = 2
 
+DATA = {'slope_angle': SLOPE,
+        'h': HEIGHT,
+        'radius_range': np.arange(0.5,2.5*M*HEIGHT,3),
+        'left_right': [M*HEIGHT, 1.5*M*HEIGHT],
+        'slope_coordinates': [(0,0), (HEIGHT/math.tan(math.radians(SLOPE)),HEIGHT)],
+        'steps_number': 100,
+        'below_depth': 0.5*HEIGHT,
+        'density': 18,
+        'coordinates': [(-2.6*HEIGHT,0), (2*HEIGHT,HEIGHT)],
+        'radius': HEIGHT*3,
+        'lower_friction': 0
+        }
+
+# POTATO = []
+MESS = "stability number, n (left intersection distance/height), radius/height, radius_x, radius_y, sector angle, radius/d\n"
 
 # Classes
 
 class Cohesive_slope:
-    def __init__(self, slope_angle, h, below_depth, density, coordinates, slope_coor, radius):
+    def __init__(self, slope_angle, h, below_depth, density, coordinates, slope_coor, radius, lower_friction=0):
         self.slope_angle = slope_angle
         self.h = h
+        self.lower_friction = lower_friction
         self.density = density
         self.coordinates = list(coordinates) # list of two tuples (two intersection points with the ground)
         self.below_depth = below_depth # depth to the stratum below from the top
@@ -23,109 +40,157 @@ class Cohesive_slope:
         self.type = self.determine_type()
 
         self.circle_cg, self.circle_angle = get_circle_centre(self.coordinates, radius)
+        self.compound, self.compound_coor, self.compound_angle = self.is_compound()
+
         self.areas, self.ne_poly, self.po_poly = self.get_areas() # list of lists; each list has [0]: area, [1]: coordinate tuple
 
         self.cd = self.calculate_cd()
         self.stability_number = self.cd / (self.density * self.h)
 
+        self.ch = self.radius/(self.circle_cg[1]+self.below_depth)
 
     def __str__(self):
         msg = "\nType: " + self.type
+        msg = msg + "\nCompound?: " + str(self.compound)
         msg = msg + "\nINTERSECTION COORDINATES: ({:.2f}, {:.2f}), ({:.2f}, {:.2f})".format(self.coordinates[0][0], self.coordinates[0][1], self.coordinates[1][0], self.coordinates[1][1])
         msg = msg + "\ncircle cg: " + str(self.circle_cg)
         msg = msg + "\ncircle radius: " + str(self.radius)
         msg = msg + "\ncircle angle: " + str(self.circle_angle*180/np.pi)
         msg = msg + "\ndeveloped cohesion (cd): " + str(self.cd)
         msg = msg + "\nstability number (m): " + str(self.stability_number)
-
         return msg
-
 
     def determine_type(self):
         if self.coordinates[0][0] < 0: return "Base"
+        elif self.coordinates[0][0] == 0: return "Toe"
         else: return "Slope"
+    def is_compound(self):
+        if self.below_depth < 0: return False, [], 0
+        coor, angle = horizontal_intersect_arc(self.radius, self.circle_cg, self.below_depth)
+        if len(coor) > 1: return True, coor, angle
+        return False, coor, 0
 
     def get_areas(self):
 
         areas = []
         ne_poly = []
         po_poly = []
+        if not self.compound:
+            if self.circle_cg[0] < self.coordinates[0][0]:
+                # No Resisting Areas
+                segment = deal_with_arcs(self.coordinates, self.radius)
+                poly_coor = [self.coordinates[0], self.slope_coordinates[1], self.coordinates[1]]
+                poly = poly_area_calculation(poly_coor)
+
+                self.poly_coordinates = poly_coor
+                areas = [segment, poly]
+                po_poly = poly_coor
+                po_poly.append(poly_coor[0])
 
 
-        if self.circle_cg[0] < self.coordinates[0][0]:
-            # No Resisting Areas
-            segment = deal_with_arcs(self.coordinates, self.radius)
-            poly_coor = [self.coordinates[0], self.slope_coordinates[1], self.coordinates[1]]
-            poly = poly_area_calculation(poly_coor)
+            else:
+                int_coor = [intersection_point([self.circle_cg, [self.circle_cg[0], -100*self.radius]], self.slope_coordinates),
+                            [self.circle_cg[0], self.circle_cg[1]-self.radius]] # 0: with slope, 1: with circle
 
-            self.poly_coordinates = poly_coor
-            areas = [segment, poly]
-            po_poly = poly_coor
+                if self.circle_cg[0] < 0: int_coor[0] = (self.circle_cg[0], 0)
 
+
+                # Acting Areas
+                segment= deal_with_arcs([int_coor[1], self.coordinates[1]], self.radius)
+                poly_coor = [int_coor[0], int_coor[1], self.coordinates[1]]
+                if self.coordinates[1] > self.slope_coordinates[1]: poly_coor.append(self.slope_coordinates[1])
+
+
+                poly = poly_area_calculation(poly_coor)
+
+                if self.type != "Base":
+                    # Resisting areas
+                    res_segment = deal_with_arcs([self.coordinates[0], int_coor[1]], self.radius)
+                    res_poly_coor = [self.coordinates[0], int_coor[0], int_coor[1]]
+                    res_poly = poly_area_calculation(res_poly_coor)
+
+                    areas = [segment, poly, res_segment, res_poly]
+
+                else:
+                    # Resisting areas
+                    res_segment = deal_with_arcs([self.coordinates[0], int_coor[1]], self.radius)
+                    res_poly_coor = [self.coordinates[0], (0.0,0.0), int_coor[0], int_coor[1]]
+                    res_poly = poly_area_calculation(res_poly_coor)
+
+                    areas = [segment, poly, res_segment, res_poly]
+
+                ne_poly = res_poly_coor + [res_poly_coor[0]]
+                po_poly = poly_coor + [poly_coor[0]]
 
         else:
-            int_coor = [intersection_point([self.circle_cg, [self.circle_cg[0], -100*self.radius]], self.slope_coordinates),
-                        [self.circle_cg[0], self.circle_cg[1]-self.radius]]
+            int_coor = [intersection_point([self.circle_cg, [self.circle_cg[0], -100 * self.radius]], self.slope_coordinates),
+                [self.circle_cg[0], self.circle_cg[1] - self.radius]]  # 0: with slope, 1: with circle
+            mid_horizontal = (0.5 * (self.compound_coor[0][0] + self.compound_coor[1][0]), self.compound_coor[0][1])
+
+            act_compound_intersect = intersection_point(self.slope_coordinates, [self.compound_coor[1], (self.compound_coor[1][0], self.compound_coor[1][1]+self.h+self.below_depth)])
+            if self.compound_coor[1][0] > self.h/(math.tan(math.radians(self.slope_angle))): act_compound_intersect = (self.compound_coor[1][0], self.h)
+            else: act_compound_intersect = (0,0)
+
+            res_compound_intersect = intersection_point(self.slope_coordinates, [self.compound_coor[0], (self.compound_coor[0][0], self.compound_coor[0][1]+self.h+self.below_depth)])
+            if self.compound_coor[0][0] < 0: res_compound_intersect = (self.compound_coor[0][0], 0)
+            elif self.compound_coor[0][0] > self.h/(math.tan(math.radians(self.slope_angle))): res_compound_intersect = (self.compound_coor[0][0], self.h)
+
 
             if self.circle_cg[0] < 0: int_coor[0] = (self.circle_cg[0], 0)
 
-
             # Acting Areas
-            segment= deal_with_arcs([int_coor[1], self.coordinates[1]], self.radius)
-            poly_coor = [int_coor[0], int_coor[1], self.coordinates[1]]
+            segment = deal_with_arcs([self.compound_coor[1], self.coordinates[1]], self.radius)
+            # poly_coor = [int_coor[0], mid_horizontal, self.compound_coor[1], self.coordinates[1]]
+            poly_coor = [act_compound_intersect, self.compound_coor[1], self.coordinates[1]]
             if self.coordinates[1] > self.slope_coordinates[1]: poly_coor.append(self.slope_coordinates[1])
 
             poly = poly_area_calculation(poly_coor)
 
-            if self.type == "Slope":
+            if self.type != "Base":
                 # Resisting areas
-                res_segment = deal_with_arcs([self.coordinates[0], int_coor[1]], self.radius)
-                res_poly_coor = [self.coordinates[0], int_coor[0], int_coor[1]]
+                res_segment = deal_with_arcs([self.coordinates[0], self.compound_coor[0]], self.radius)
+                # res_poly_coor = [self.coordinates[0], int_coor[0], mid_horizontal, self.compound_coor[0]]
+                res_poly_coor = [self.coordinates[0], res_compound_intersect, self.compound_coor[0]]
                 res_poly = poly_area_calculation(res_poly_coor)
 
                 areas = [segment, poly, res_segment, res_poly]
 
             else:
                 # Resisting areas
-                res_segment = deal_with_arcs([self.coordinates[0], int_coor[1]], self.radius)
-                res_poly_coor = [self.coordinates[0], (0.0,0.0), int_coor[0], int_coor[1]]
+                res_segment = deal_with_arcs([self.coordinates[0], self.compound_coor[0]], self.radius)
+                # res_poly_coor = [self.coordinates[0], (0.0, 0.0), int_coor[0], mid_horizontal, self.compound_coor[0]]
+                res_poly_coor = [self.coordinates[0], (0.0, 0.0), res_compound_intersect, self.compound_coor[0]]
                 res_poly = poly_area_calculation(res_poly_coor)
+
 
                 areas = [segment, poly, res_segment, res_poly]
 
-            ne_poly = res_poly_coor+[res_poly_coor[0]]
+            ne_poly = res_poly_coor + [res_poly_coor[0]]
             po_poly = poly_coor + [poly_coor[0]]
 
 
         return areas, ne_poly, po_poly
-
-
     def calculate_cd(self):
         moment = 0
+
+        if self.circle_angle == 0: return 0
+
         for area in self.areas:
             moment += area[0] * (area[1][0] - self.circle_cg[0])
-        return (self.density * moment) / (self.circle_angle * self.radius**2)
 
-    def plot_slope(self, color="grey", width=0.5, style="dashed"):
-        plot_arc(self.coordinates,self.circle_cg,self.radius,color,width,style)
+        if not self.compound: return (self.density * moment) / (self.circle_angle * self.radius**2)
+        return (self.density * moment) / ((self.circle_angle - self.compound_angle) * self.radius**2 + (self.compound_coor[1][0]-self.compound_coor[0][0])*(self.circle_cg[1]+self.below_depth))
 
+    def plot_slope(self, color="grey", width=0.5, style="dashed", alpha=1, z=1):
+        plot_arc(self.coordinates,self.circle_cg,self.radius,color,width,style, alpha, z)
+
+    def plot_compound(self, color="grey", width=0.5, style="dashed", alpha=1, z=3):
+        if self.compound: plot_poly(self.compound_coor, color, width, style, alpha, z)
     def plot_poly(self):
         #shapes
 
-        x = []
-        y = []
-        for cor in self.ne_poly:
-            x.append(cor[0])
-            y.append(cor[1])
-        plt.plot(x,y)
-
-        x = []
-        y = []
-        for cor in self.po_poly:
-            x.append(cor[0])
-            y.append(cor[1])
-        plt.plot(x,y)
-
+        plot_poly(self.ne_poly)
+        plot_poly(self.po_poly)
 
         #CGS
         x = []
@@ -136,12 +201,11 @@ class Cohesive_slope:
 
             plt.text(area[1][0], area[1][1],"{:.2f}, ({:.2f})".format(area[0], area[1][0]-self.circle_cg[0]))
 
-        plt.scatter(x,y)
-
+        plt.scatter(x,y, zorder=4, s=15, c='red')
 
 # Helper Functions
 
-def plot_arc(points, cg, radius, color="grey", width=0.5, style="dashed"):
+def plot_arc(points, cg, radius, color="grey", width=0.5, style="dashed", alpha=1.0, z=1):
     theta_1 = line_slope([points[0], cg]) + np.pi
     theta_2 = line_slope([cg, points[1]]) + 2 * np.pi
 
@@ -151,10 +215,7 @@ def plot_arc(points, cg, radius, color="grey", width=0.5, style="dashed"):
 
     x = radius * np.cos(theta) + cg[0]
     y = radius * np.sin(theta) + cg[1]
-    plt.plot(x, y, color, linewidth=width, linestyle=style)
-
-
-
+    plt.plot(x, y, color, linewidth=width, linestyle=style, alpha=alpha, zorder=z)
 def get_circle_centre(points, radius):
     """returns the cg of a circle (and angle of sector) given two points and a radius"""
     l = distance(points[0], points[1])
@@ -165,11 +226,11 @@ def get_circle_centre(points, radius):
     circle_cg = (midpoint[0] - d_circle * math.sin(s), midpoint[1] + d_circle * math.cos(s))
 
     return circle_cg, phi
-
 def deal_with_arcs(points, radius):
     """deals with circular segments"""
     l = distance(points[0], points[1])
     phi = math.pi - 2 * math.acos(l / (2 * radius))
+    if l < 2**-15: return [0, (0,0)]
     s = line_slope(points)
     area = (radius**2/2.0)*(phi-math.sin(phi))
     midpoint = get_cg(points)
@@ -178,13 +239,12 @@ def deal_with_arcs(points, radius):
     segment_cg = (midpoint[0]+d_segment*math.sin(s), midpoint[1]-d_segment*math.cos(s))
 
     return [area, segment_cg]
-
 def poly_area_calculation(points):
     """gets Area and CG"""
     l = len(points)
     if len(points) < 3: raise ValueError('NOT SUFFICIENT POINTS!')
 
-    sum = [0, 0]
+    sum = [0.0, 0.0]
     area = 0
 
     for i in range(l):
@@ -197,11 +257,11 @@ def poly_area_calculation(points):
         area += m
 
     area = 0.5 * area
-    sum[0] = sum[0]/(6*area)
-    sum[1] = sum[1]/(6*area)
+    if area != 0:
+        sum[0] = sum[0]/(6*area)
+        sum[1] = sum[1]/(6*area)
 
     return [abs(area), (sum[0], sum[1])]
-
 def get_cg(list_of_coordinates):
     """gets CG of list of coordinates"""
     l = len(list_of_coordinates)
@@ -249,7 +309,6 @@ def intersection_point(line1, line2):
     if not isBetween(solution, line1): return None
 
     return solution
-
 def intersects_land(point, slope, slope_angle):
     if point[0] > slope[1][0]:
         if point[1] < slope[1][1]: return False
@@ -261,19 +320,59 @@ def intersects_land(point, slope, slope_angle):
         if point[1] < 0: return False
 
     return True
-
 def line_slope(line):
     """
     :param line: list of two points
     :return: slope of line
     """
+    if line[1][0] - line[0][0] == 0: return math.radians(90)
     return math.atan((line[1][1]-line[0][1])/(line[1][0]-line[0][0]))
-
 def min_radius(h, angle):
     return h/math.sin(math.radians(angle))
+def horizontal_intersect_arc(radius, arc_cg, horizontal_level):
+    """determines the intersection point of a horizontal level with an arc. returns a list of points"""
+    d = arc_cg[1] + horizontal_level
+    if radius < d: return [], 0
+    elif radius == d: return [(arc_cg[0], arc_cg[1] - d)], 0
+    else:
+        l = math.sqrt(radius**2-d**2)
+        theta = 2 * math.atan(l/d)
+        return [(arc_cg[0]-l, arc_cg[1] - d), (arc_cg[0]+l, arc_cg[1] - d)], theta
+def plot_poly(poly, color="green", width=1, style="solid", alpha=1, z=1):
+    x = []
+    y = []
+    for cor in poly:
+        x.append(cor[0])
+        y.append(cor[1])
+    plt.plot(x, y, color, linewidth=width, linestyle=style, alpha=alpha, zorder=z)
+def plot_land(slope, fill=True):
+    x = [slope.coordinates[0][0] - 1.2 * slope.h, slope.coordinates[1][0] + 1.2 * slope.h]
+    y1 = [-1 * slope.below_depth, -1 * slope.below_depth]
+    y2 = [slope.circle_cg[1] - slope.radius * 1.2] * 2
+    y3 = [slope.circle_cg[1] - slope.radius * 1.2] * 4
+
+    x_land = [slope.coordinates[0][0] - 1.2 * slope.h, 0, slope.slope_coordinates[1][0], slope.coordinates[1][0] + 1.2 * slope.h]
+    y_land = [0, 0, slope.h, slope.h]
+
+    if fill:
+        plt.fill_between(x_land, y_land, y3, facecolor='lightsalmon', alpha=0.2, zorder=1)
+        try:
+            plt.fill_between(x, y1, y2, facecolor='peachpuff', zorder=2)
+        except:pass
+
+    try:
+        plt.plot(x, y1, 'brown')
+    except: pass
+    plt.plot(x_land, y_land, "black", linewidth=3)
+def write_list(list):
+    msg = ""
+    for item in list:
+        msg= msg + str(item) + ', '
+    msg += '\n'
+    return msg
 
 # brains
-def generate_failures(height, slope_angle, steps_number, half_horiz, radius_range):
+def generate_failures(height, slope_angle, steps_number, half_horiz, radius_range, below_level=-1, density=18, lower_friction=0):
     """
     generates multiple Cohesive_slope objects
     :param height: vertical height
@@ -284,13 +383,12 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
     :return: list of Cohesive_slope objects, the critical slope, and the slope coordinates
     """
 
-    global  POTATO
+    global  POTATO, MESS
 
     land_coor = [(-1.0*half_horiz[0], 0.0),
                  (0.0, 0.0),
                  (height / math.tan(math.radians(slope_angle)), height),
                  ((height / math.tan(math.radians(slope_angle)))+half_horiz[1], height)]
-
     slope_coor = [(0.0, 0.0),
                  (height / math.tan(math.radians(slope_angle)), height)]
 
@@ -298,9 +396,9 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
     critical_slope = None
 
     horiz_steps = np.linspace(-1.0*half_horiz[0], (height / math.tan(math.radians(slope_angle)))+half_horiz[1], steps_number)
+
     if 0 not in horiz_steps: horiz_steps = np.append(horiz_steps, [0])
     if land_coor[2][0] not in horiz_steps: horiz_steps = np.append(horiz_steps, [land_coor[2][0]])
-
 
     for radius in radius_range:
         print("ANGLE ({:.1f}) Computing all possible circles of radius {:.5f}".format(slope_angle, radius))
@@ -318,23 +416,33 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
                 arc_coordinates = [(i, iy), (j, jy)]
                 if distance(arc_coordinates[0], arc_coordinates[1]) > 2*radius: continue
 
-                iter_slope = Cohesive_slope(slope_angle,height,0,18,arc_coordinates,slope_coor,radius)
+                iter_slope = Cohesive_slope(slope_angle,height,below_level,density,arc_coordinates,slope_coor,radius, lower_friction=lower_friction)
+
+                if below_level == 0 and iter_slope.coordinates[0][0] < 0: continue
+
+                if iter_slope.compound:
+                    if iter_slope.compound_coor[0][0] < iter_slope.coordinates[0][0]: continue
 
                 if distance((0, 0), iter_slope.circle_cg) > radius: continue
                 if (iter_slope.circle_cg[1] - radius > iter_slope.circle_cg[0] * math.tan(math.radians(slope_angle))) and iter_slope.circle_cg[0] > 0: continue
 
+                #ch = radius/(iter_slope.circle_cg[1]+below_level)
 
+                #if ch <= 1: iter_slope.plot_slope(color='lightgrey', alpha=0.3)
 
                 if iter_slope.cd > cd_critical:
                     critical_slope = iter_slope
                     cd_critical = critical_slope.cd
 
-                POTATO.append([slope_angle, radius/height, iter_slope.coordinates[0][0]/height, iter_slope.stability_number])
+                    iter_slope.plot_slope(color='red', width=1, alpha=0.2)
+                    #MESS = MESS + str(iter_slope.stability_number) +", " + str(iter_slope.coordinates[0][0]/height) +", "  + str(iter_slope.radius/height) +", "  + str(iter_slope.circle_cg[0]) +", "  + str(iter_slope.circle_cg[1]) +", "  + str(iter_slope.circle_angle) + ", "  + str(ch) + "\n"
+                    #"stability number, n (left intersection distance/height), radius/height, radius_x, radius_y\n"
+
+
+
+                # POTATO.append([slope_angle, radius/height, iter_slope.coordinates[0][0]/height, iter_slope.stability_number])
 
     return critical_slope
-
-
-
 
 def smart_sloper(angle, height, iterations):
     """
@@ -379,100 +487,86 @@ def smart_sloper(angle, height, iterations):
 
     return critical_s
 
+plt.figure(figsize=(15, 7), tight_layout=True)
+plt.axis('off')
+#
+mySlope = generate_failures(DATA['h'],
+                            DATA['slope_angle'],
+                            DATA['steps_number'],
+                            DATA['left_right'],
+                            DATA['radius_range'],
+                            below_level=10,
+                            density=DATA['density'],
+                            lower_friction=DATA['lower_friction'])
+
+# mySlope = Cohesive_slope(DATA['slope_angle'], DATA['h'], DATA['below_depth'], DATA['density'], DATA['coordinates'], DATA['slope_coordinates'], DATA['radius'])
+
+mySlope.plot_slope(width=3, color='blue', style='solid')
+#mySlope.plot_compound(width=3, color='blue', style='solid')
+
+plot_land(mySlope, fill=True)
 
 
-
-
-
-# fig = plt.figure()
-
-
-# r_step = 0.01
-# r_min = 14
-# r_max = 15
-# half_horiz = 15
-#
-#
-# radius_range = np.arange(r_min, r_max, r_step)
-#
-# slopes, critical_slope, slope_coor = generate_failures(DATA['h'], DATA['slope_angle'],100,half_horiz, radius_range)
-#
-#
-# print("\ndrawing slope..")
-#
-#
-# critical_slope.plot_slope("blue", 1.5, "solid")
-# print("\n\n")
-# print(critical_slope)
-
+# DH = [1, 1.2, 1.5, 2, 4, 10]
 
 #
-# mySlope = Cohesive_slope(60,10,0,18,[(0,0),(15,10)], slope_coor,10)
-# mySlope.plot_slope(color="blue")
+# f = open("taylorRe.csv", 'w')
+# f.write("slope angle, stability number, D, n (left intersection distance/height), radius/height, radius_x, radius_y, sector angle, Type, Compound\n")
 #
-#crit = smart_sloper(DATA['slope_angle'], DATA['h'], 6)
-
-radius_range = np.arange(0, 5*DATA['h'], 0.5)
-
-# crit = generate_failures(DATA['h'], DATA['slope_angle'],150,[30,30], radius_range)
-
-# crit.plot_slope(color="blue")
+# for d in DH:
+#     print('\n\n DEALING WITH ALL D = ', d)
+#     for angle in range(1,89,1):
+#         print('solving for slope angle = ', angle)
+#         SLOPE = angle
+#         DATA = {'slope_angle': SLOPE,
+#                 'h': HEIGHT,
+#                 'radius_range': np.arange(0.5, 2 * M * HEIGHT, 0.5),
+#                 'left_right': [M * HEIGHT, M * HEIGHT],
+#                 'slope_coordinates': [(0, 0), (HEIGHT / math.tan(math.radians(SLOPE)), HEIGHT)],
+#                 'steps_number': 50,
+#                 'below_depth': 0.5 * HEIGHT,
+#                 'density': 18,
+#                 'coordinates': [(-2.6 * HEIGHT, 0), (2 * HEIGHT, HEIGHT)],
+#                 'radius': HEIGHT * 3,
+#                 'lower_friction': 0
+#                 }
 #
-# print(crit)
+#         DATA['below_depth'] = (d - 1) * HEIGHT
 #
-# plt.plot([slope_coor[0][0] - 2*DATA['h']-2, slope_coor[0][0], slope_coor[1][0], slope_coor[1][0] + 2*DATA['h']+2],
-#          [slope_coor[0][1], slope_coor[0][1], slope_coor[1][1], slope_coor[1][1]],
-#          "black", linewidth=3)
+#         plt.clf()
 #
-# crit.plot_poly()
+#         mySlope = generate_failures(DATA['h'],
+#                                     DATA['slope_angle'],
+#                                     DATA['steps_number'],
+#                                     DATA['left_right'],
+#                                     DATA['radius_range'],
+#                                     below_level=DATA['below_depth'],
+#                                     density=DATA['density'],
+#                                     lower_friction=DATA['lower_friction'])
 #
-# plt.gca().set_aspect('equal', adjustable='box')
-# plt.show()
-
-# for angle in range(60,64,5):
-#     DATA['slope_angle'] = angle
-#     crit = smart_sloper(DATA['slope_angle'], DATA['h'], 10)
-
-# f = open("data.csv",'a')
+#         mySlope.plot_slope(width=3, color='blue', style='solid')
+#         mySlope.plot_compound(width=3, color='blue', style='solid')
+#         plt.scatter([mySlope.circle_cg[0]], [mySlope.circle_cg[1]], c='black', s=15, marker='x')
+#         plot_land(mySlope, fill=True)
 #
-# f.write("angle, radius/h, n, stability number\n")
+#         plt.savefig('plots/'+str(d)+'_'+str(angle)+'.png')
 #
-# for pot in POTATO:
-#     f.write("{:.6f}, {:.6f}, {:.6f}, {:.6f}\n".format(pot[0],pot[1],pot[2],pot[3]))
-#
+#         iterate = [angle, mySlope.stability_number, d, mySlope.coordinates[0][0]/mySlope.h, mySlope.radius/mySlope.h,
+#                    mySlope.circle_cg[0], mySlope.circle_cg[1], mySlope.circle_angle, mySlope.type, mySlope.compound]
+#         f.write(write_list(iterate))
+# # f.write(MESS)
 #
 # f.close()
 
-crits = []
 
-for angle in range(10,81,5):
-    print("\n\nGenerating for slope angle ", angle)
-    DATA['slope_angle'] = angle
-    crit = generate_failures(DATA['h'], DATA['slope_angle'], 50, [30, 30], radius_range)
+mySlope.plot_poly()
 
-    print('\n\n', crit, '\n\n')
-    crits.append((angle, crit.stability_number))
+plt.scatter([mySlope.circle_cg[0]], [mySlope.circle_cg[1]], c='black', s=15, marker='x')
 
+print(mySlope)
+print(mySlope.lower_friction)
+print(mySlope.radius/(mySlope.circle_cg[1]+mySlope.below_depth))
 
-print("\nsaving..")
-
-f = open("ms.csv",'w')
-
-f.write("angle, radius/h, n, stability number\n")
-
-for pot in POTATO:
-    f.write("{:.6f}, {:.6f}, {:.6f}, {:.6f}\n".format(pot[0],pot[1],pot[2],pot[3]))
-
-
-f.close()
-
-
-f = open("taylor.csv",'w')
-
-f.write("angle, stability number\n")
-
-for c in crits:
-    f.write("{:.6f}, {:.6f}\n".format(c[0],c[1]))
-
-
-f.close()
+plt.gca().set_aspect('equal', adjustable='box')
+plt.axis('off')
+plt.show()

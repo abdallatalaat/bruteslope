@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5c5c0082-b9f3-4e8f-84b7-77fa097a5e54" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/backup.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cleaner_bruteslope.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bruteslope.py" beforeDir="false" afterPath="$PROJECT_DIR$/bruteslope.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,13 +14,86 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="bruteslope" />
+  </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bruteslope.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="390" selection-start-line="390" selection-end-line="390" />
+            <state relative-caret-position="392">
+              <caret line="442" column="49" selection-end-line="571" selection-end-column="10" />
+              <folding>
+                <element signature="e#10#21#0" expanded="true" />
+                <element signature="e#1812#2436#0" />
+                <element signature="e#2476#2604#0" />
+                <element signature="e#2640#2859#0" />
+                <element signature="e#2895#8003#0" />
+                <element signature="e#8040#8487#0" />
+                <element signature="e#8578#8659#0" />
+                <element signature="e#8754#8832#0" />
+                <element signature="e#8866#9242#0" />
+                <element signature="e#9359#9710#0" />
+                <element signature="e#9754#10213#0" />
+                <element signature="e#10254#10768#0" />
+                <element signature="e#10808#11357#0" />
+                <element signature="e#11395#11626#0" />
+                <element signature="e#11661#11780#0" />
+                <element signature="e#11820#11986#0" />
+                <element signature="e#12029#13097#0" />
+                <element signature="e#13150#13411#0" />
+                <element signature="e#13438#13643#0" />
+                <element signature="e#13674#13712#0" />
+                <element signature="e#13781#14176#0" />
+                <element signature="e#14255#14426#0" />
+                <element signature="e#14464#15209#0" />
+                <element signature="e#15236#15333#0" />
+                <element signature="e#20762#20792#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/cleaner_bruteslope.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="425">
+              <caret line="183" column="81" selection-start-line="183" selection-start-column="81" selection-end-line="183" selection-end-column="81" />
+              <folding>
+                <element signature="e#10#21#0" expanded="true" />
+                <element signature="e#1812#2436#0" />
+                <element signature="e#2476#2604#0" />
+                <element signature="e#2640#2859#0" />
+                <element signature="e#2895#8003#0" />
+                <element signature="e#8040#8487#0" />
+                <element signature="e#8578#8659#0" />
+                <element signature="e#8865#9241#0" />
+                <element signature="e#9358#9709#0" />
+                <element signature="e#9753#10212#0" />
+                <element signature="e#10253#10767#0" />
+                <element signature="e#10807#11356#0" />
+                <element signature="e#11394#11625#0" />
+                <element signature="e#11660#11779#0" />
+                <element signature="e#11819#11985#0" />
+                <element signature="e#12028#13096#0" />
+                <element signature="e#13149#13410#0" />
+                <element signature="e#13437#13642#0" />
+                <element signature="e#13673#13711#0" />
+                <element signature="e#13780#14175#0" />
+                <element signature="e#14254#14425#0" />
+                <element signature="e#14322#15091#0" />
+                <element signature="e#15235#15332#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/backup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2703">
+              <caret line="159" selection-start-line="159" selection-end-line="160" selection-end-column="86" />
               <folding>
                 <element signature="e#10#21#0" expanded="true" />
               </folding>
@@ -28,8 +104,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+            <state relative-caret-position="289">
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
             </state>
           </provider>
         </entry>
@@ -37,16 +113,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Columb/columb/columb.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8993">
-              <caret line="636" column="59" selection-start-line="636" selection-start-column="12" selection-end-line="636" selection-end-column="59" />
+            <state relative-caret-position="10693">
+              <caret line="643" column="12" selection-start-line="643" selection-start-column="12" selection-end-line="643" selection-end-column="27" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
                 <element signature="e#296#1475#0" />
-                <element signature="e#11054#11725#0" />
-                <element signature="e#11749#12292#0" />
-                <element signature="e#12343#12470#0" />
-                <element signature="e#12492#13584#0" />
-                <element signature="e#13615#15456#0" />
               </folding>
             </state>
           </provider>
@@ -68,12 +139,21 @@
       <find>intersection_point</find>
       <find>plot</find>
       <find>line_s</find>
-      <find>print</find>
       <find>poly</find>
+      <find>iter</find>
+      <find>poly_area_calculation</find>
+      <find>get_cg</find>
+      <find>slope_coor</find>
+      <find>print</find>
+      <find>mySlope</find>
+      <find>density</find>
     </findStrings>
     <replaceStrings>
       <replace>slope_angle</replace>
       <replace>line</replace>
+      <replace>i</replace>
+      <replace>DATA['slope_coordinates</replace>
+      <replace>DATA['slope_coordinates']</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -83,13 +163,16 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/../Columb/columb/columb.py" />
+        <option value="$PROJECT_DIR$/backup.py" />
         <option value="$PROJECT_DIR$/bruteslope.py" />
+        <option value="$PROJECT_DIR$/cleaner_bruteslope.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="360" />
-    <option name="y" value="-8" />
+    <option name="x" value="571" />
+    <option name="y" value="435" />
     <option name="width" value="980" />
     <option name="height" value="517" />
   </component>
@@ -137,7 +220,70 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.cleaner_bruteslope">
+    <configuration name="backup" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="slopes" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/backup.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="bruteslope" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="slopes" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bruteslope.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="cleaner_bruteslope" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="slopes" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/cleaner_bruteslope.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="slopes" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -161,6 +307,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.cleaner_bruteslope" />
+        <item itemvalue="Python.bruteslope" />
+        <item itemvalue="Python.backup" />
         <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
@@ -182,12 +331,12 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12592202" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49849397" visible="true" weight="0.12592202" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info id="Favorites" order="2" sideWeight="0.50150603" side_tool="true" weight="0.12592202" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.16793066" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28060672" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -202,35 +351,96 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/../Columb/columb/columb.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8993">
-          <caret line="636" column="59" selection-start-line="636" selection-start-column="12" selection-end-line="636" selection-end-column="59" />
+        <state relative-caret-position="10693">
+          <caret line="643" column="12" selection-start-line="643" selection-start-column="12" selection-end-line="643" selection-end-column="27" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
             <element signature="e#296#1475#0" />
-            <element signature="e#11054#11725#0" />
-            <element signature="e#11749#12292#0" />
-            <element signature="e#12343#12470#0" />
-            <element signature="e#12492#13584#0" />
-            <element signature="e#13615#15456#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
+    <entry file="file://$PROJECT_DIR$/backup.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="8" selection-start-line="4" selection-start-column="8" selection-end-line="4" selection-end-column="8" />
+        <state relative-caret-position="2703">
+          <caret line="159" selection-start-line="159" selection-end-line="160" selection-end-column="86" />
+          <folding>
+            <element signature="e#10#21#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bruteslope.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="390" selection-start-line="390" selection-end-line="390" />
+        <state relative-caret-position="392">
+          <caret line="442" column="49" selection-end-line="571" selection-end-column="10" />
           <folding>
             <element signature="e#10#21#0" expanded="true" />
+            <element signature="e#1812#2436#0" />
+            <element signature="e#2476#2604#0" />
+            <element signature="e#2640#2859#0" />
+            <element signature="e#2895#8003#0" />
+            <element signature="e#8040#8487#0" />
+            <element signature="e#8578#8659#0" />
+            <element signature="e#8754#8832#0" />
+            <element signature="e#8866#9242#0" />
+            <element signature="e#9359#9710#0" />
+            <element signature="e#9754#10213#0" />
+            <element signature="e#10254#10768#0" />
+            <element signature="e#10808#11357#0" />
+            <element signature="e#11395#11626#0" />
+            <element signature="e#11661#11780#0" />
+            <element signature="e#11820#11986#0" />
+            <element signature="e#12029#13097#0" />
+            <element signature="e#13150#13411#0" />
+            <element signature="e#13438#13643#0" />
+            <element signature="e#13674#13712#0" />
+            <element signature="e#13781#14176#0" />
+            <element signature="e#14255#14426#0" />
+            <element signature="e#14464#15209#0" />
+            <element signature="e#15236#15333#0" />
+            <element signature="e#20762#20792#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cleaner_bruteslope.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="183" column="81" selection-start-line="183" selection-start-column="81" selection-end-line="183" selection-end-column="81" />
+          <folding>
+            <element signature="e#10#21#0" expanded="true" />
+            <element signature="e#1812#2436#0" />
+            <element signature="e#2476#2604#0" />
+            <element signature="e#2640#2859#0" />
+            <element signature="e#2895#8003#0" />
+            <element signature="e#8040#8487#0" />
+            <element signature="e#8578#8659#0" />
+            <element signature="e#8865#9241#0" />
+            <element signature="e#9358#9709#0" />
+            <element signature="e#9753#10212#0" />
+            <element signature="e#10253#10767#0" />
+            <element signature="e#10807#11356#0" />
+            <element signature="e#11394#11625#0" />
+            <element signature="e#11660#11779#0" />
+            <element signature="e#11819#11985#0" />
+            <element signature="e#12028#13096#0" />
+            <element signature="e#13149#13410#0" />
+            <element signature="e#13437#13642#0" />
+            <element signature="e#13673#13711#0" />
+            <element signature="e#13780#14175#0" />
+            <element signature="e#14254#14425#0" />
+            <element signature="e#14322#15091#0" />
+            <element signature="e#15235#15332#0" />
           </folding>
         </state>
       </provider>
