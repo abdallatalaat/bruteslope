@@ -22,8 +22,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bruteslope.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1327">
-              <caret line="442" column="49" selection-end-line="571" selection-end-column="10" />
+            <state relative-caret-position="24">
+              <caret line="426" column="49" selection-start-line="426" selection-start-column="49" selection-end-line="426" selection-end-column="49" />
               <folding>
                 <element signature="e#10#21#0" expanded="true" />
                 <element signature="e#1812#2436#0" />
@@ -49,7 +49,7 @@
                 <element signature="e#14255#14426#0" />
                 <element signature="e#14464#15209#0" />
                 <element signature="e#15236#15333#0" />
-                <element signature="e#20762#20792#0" />
+                <element signature="e#18873#19981#0" />
               </folding>
             </state>
           </provider>
@@ -58,32 +58,40 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cleaner_bruteslope.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="107" column="30" selection-start-line="107" selection-start-column="30" selection-end-line="107" selection-end-column="30" />
+            <state relative-caret-position="272">
+              <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
               <folding>
                 <element signature="e#10#21#0" expanded="true" />
-                <element signature="e#1812#2436#0" />
-                <element signature="e#2702#3902#0" />
-                <element signature="e#6095#7772#0" />
-                <element signature="e#8040#8487#0" />
-                <element signature="e#8578#8659#0" />
-                <element signature="e#8753#8831#0" />
-                <element signature="e#9358#9709#0" />
-                <element signature="e#9753#10212#0" />
-                <element signature="e#10253#10767#0" />
-                <element signature="e#10807#11356#0" />
-                <element signature="e#11394#11625#0" />
-                <element signature="e#11660#11779#0" />
-                <element signature="e#11819#11985#0" />
-                <element signature="e#12028#13096#0" />
-                <element signature="e#13041#13224#0" />
-                <element signature="e#13149#13410#0" />
-                <element signature="e#13437#13642#0" />
-                <element signature="e#13673#13711#0" />
-                <element signature="e#13780#14175#0" />
-                <element signature="e#14254#14425#0" />
-                <element signature="e#14322#15091#0" />
-                <element signature="e#15235#15332#0" />
+                <element signature="e#1665#2289#0" />
+                <element signature="e#2329#2457#0" />
+                <element signature="e#2492#2766#0" />
+                <element signature="e#2801#3930#0" />
+                <element signature="e#3966#7809#0" />
+                <element signature="e#4046#6056#0" />
+                <element signature="e#6084#7769#0" />
+                <element signature="e#7848#8295#0" />
+                <element signature="e#8386#8467#0" />
+                <element signature="e#8561#8639#0" />
+                <element signature="e#8673#9049#0" />
+                <element signature="e#9118#9210#0" />
+                <element signature="e#9327#9678#0" />
+                <element signature="e#9722#10181#0" />
+                <element signature="e#10222#10736#0" />
+                <element signature="e#10776#11325#0" />
+                <element signature="e#11363#11594#0" />
+                <element signature="e#11629#11748#0" />
+                <element signature="e#11788#11954#0" />
+                <element signature="e#11997#13065#0" />
+                <element signature="e#13108#13291#0" />
+                <element signature="e#13344#13605#0" />
+                <element signature="e#13632#13837#0" />
+                <element signature="e#13868#13906#0" />
+                <element signature="e#13975#14370#0" />
+                <element signature="e#14449#14620#0" />
+                <element signature="e#15584#16164#0" />
+                <element signature="e#16191#16288#0" />
+                <element signature="e#17572#19326#0" />
+                <element signature="e#20411#20441#0" />
               </folding>
             </state>
           </provider>
@@ -104,8 +112,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="409">
+              <caret line="38" selection-start-line="38" selection-end-line="38" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -113,7 +124,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../Columb/columb/columb.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="579">
+            <state relative-caret-position="392">
               <caret line="643" column="12" selection-start-line="643" selection-start-column="12" selection-end-line="643" selection-end-column="27" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
@@ -137,7 +148,6 @@
       <find>area_calculation</find>
       <find>point</find>
       <find>intersection_point</find>
-      <find>plot</find>
       <find>line_s</find>
       <find>poly</find>
       <find>iter</find>
@@ -149,6 +159,7 @@
       <find>density</find>
       <find>lower_friction</find>
       <find>res_compound_intersect</find>
+      <find>plot</find>
     </findStrings>
     <replaceStrings>
       <replace>slope_angle</replace>
@@ -173,10 +184,10 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
+    <option name="x" value="371" />
     <option name="y" value="-8" />
-    <option name="width" value="976" />
-    <option name="height" value="1056" />
+    <option name="width" value="980" />
+    <option name="height" value="517" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -310,9 +321,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.cleaner_bruteslope" />
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.bruteslope" />
         <item itemvalue="Python.backup" />
-        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -363,9 +374,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="38" selection-start-line="38" selection-end-line="38" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/../Columb/columb/columb.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="579">
+        <state relative-caret-position="392">
           <caret line="643" column="12" selection-start-line="643" selection-start-column="12" selection-end-line="643" selection-end-column="27" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
@@ -376,8 +397,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bruteslope.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1327">
-          <caret line="442" column="49" selection-end-line="571" selection-end-column="10" />
+        <state relative-caret-position="24">
+          <caret line="426" column="49" selection-start-line="426" selection-start-column="49" selection-end-line="426" selection-end-column="49" />
           <folding>
             <element signature="e#10#21#0" expanded="true" />
             <element signature="e#1812#2436#0" />
@@ -403,46 +424,47 @@
             <element signature="e#14255#14426#0" />
             <element signature="e#14464#15209#0" />
             <element signature="e#15236#15333#0" />
-            <element signature="e#20762#20792#0" />
+            <element signature="e#18873#19981#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cleaner_bruteslope.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="107" column="30" selection-start-line="107" selection-start-column="30" selection-end-line="107" selection-end-column="30" />
+        <state relative-caret-position="272">
+          <caret line="16" column="26" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="26" />
           <folding>
             <element signature="e#10#21#0" expanded="true" />
-            <element signature="e#1812#2436#0" />
-            <element signature="e#2702#3902#0" />
-            <element signature="e#6095#7772#0" />
-            <element signature="e#8040#8487#0" />
-            <element signature="e#8578#8659#0" />
-            <element signature="e#8753#8831#0" />
-            <element signature="e#9358#9709#0" />
-            <element signature="e#9753#10212#0" />
-            <element signature="e#10253#10767#0" />
-            <element signature="e#10807#11356#0" />
-            <element signature="e#11394#11625#0" />
-            <element signature="e#11660#11779#0" />
-            <element signature="e#11819#11985#0" />
-            <element signature="e#12028#13096#0" />
-            <element signature="e#13041#13224#0" />
-            <element signature="e#13149#13410#0" />
-            <element signature="e#13437#13642#0" />
-            <element signature="e#13673#13711#0" />
-            <element signature="e#13780#14175#0" />
-            <element signature="e#14254#14425#0" />
-            <element signature="e#14322#15091#0" />
-            <element signature="e#15235#15332#0" />
+            <element signature="e#1665#2289#0" />
+            <element signature="e#2329#2457#0" />
+            <element signature="e#2492#2766#0" />
+            <element signature="e#2801#3930#0" />
+            <element signature="e#3966#7809#0" />
+            <element signature="e#4046#6056#0" />
+            <element signature="e#6084#7769#0" />
+            <element signature="e#7848#8295#0" />
+            <element signature="e#8386#8467#0" />
+            <element signature="e#8561#8639#0" />
+            <element signature="e#8673#9049#0" />
+            <element signature="e#9118#9210#0" />
+            <element signature="e#9327#9678#0" />
+            <element signature="e#9722#10181#0" />
+            <element signature="e#10222#10736#0" />
+            <element signature="e#10776#11325#0" />
+            <element signature="e#11363#11594#0" />
+            <element signature="e#11629#11748#0" />
+            <element signature="e#11788#11954#0" />
+            <element signature="e#11997#13065#0" />
+            <element signature="e#13108#13291#0" />
+            <element signature="e#13344#13605#0" />
+            <element signature="e#13632#13837#0" />
+            <element signature="e#13868#13906#0" />
+            <element signature="e#13975#14370#0" />
+            <element signature="e#14449#14620#0" />
+            <element signature="e#15584#16164#0" />
+            <element signature="e#16191#16288#0" />
+            <element signature="e#17572#19326#0" />
+            <element signature="e#20411#20441#0" />
           </folding>
         </state>
       </provider>
