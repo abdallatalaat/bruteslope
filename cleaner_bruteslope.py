@@ -5,16 +5,16 @@ import matplotlib.pyplot as plt
 
 # Global Variables
 HEIGHT = 10
-SLOPE = 52
+SLOPE = 53
 M = 2
 
 DATA = {'slope_angle': SLOPE,
         'h': HEIGHT,
-        'radius_range': np.arange(0.5,2.5*M*HEIGHT,3),
+        'radius_range': np.arange(0.5,2.5*M*HEIGHT/math.tan(math.radians(SLOPE)),1.5),
         'left_right': [M*HEIGHT, 1.5*M*HEIGHT],
         'slope_coordinates': [(0,0), (HEIGHT/math.tan(math.radians(SLOPE)),HEIGHT)],
         'steps_number': 100,
-        'below_depth': 0.5*HEIGHT,
+        'below_depth': 2.5*HEIGHT,
         'density': 18,
         'coordinates': [(-2.6*HEIGHT,0), (2*HEIGHT,HEIGHT)],
         'radius': HEIGHT*3,
@@ -187,7 +187,8 @@ class Cohesive_slope:
     def plot_poly(self):
         #shapes
 
-        plot_poly(self.ne_poly)
+        try: plot_poly(self.ne_poly)
+        except: pass
         plot_poly(self.po_poly)
 
         #CGS
@@ -372,16 +373,16 @@ def plot_land(slope, fill=True):
         x_land.append(slope.slope_coordinates[1][0])
         y_land.append(slope.slope_coordinates[1][1])
 
-    x_land.insert(0,x_land[0]-10)
+    x_land.insert(0,-1000)
     y_land.insert(0,0)
 
-    x_land.append(x_land[-1]+10)
+    x_land.append(1000)
     y_land.append(slope.h)
 
     y1 = [-1 * slope.below_depth] * len(y_land)
-    y2 = [-1 * slope.below_depth - 1] * len(y_land)
+    y2 = [-100] * len(y_land)
 
-    if slope.compound: y2 = [slope.circle_cg[1] - slope.radius - 1] * len(y_land)
+    #if slope.compound: y2 = [slope.circle_cg[1] - slope.radius - 1] * len(y_land)
 
 
     if fill:
@@ -390,20 +391,21 @@ def plot_land(slope, fill=True):
 
         plt.plot(x_land, y1, 'brown')
     plt.plot(x_land, y_land, "black", linewidth=3)
-def update_data(new_height=HEIGHT, new_slope=SLOPE, new_m=M):
+def update_data(new_height=HEIGHT, new_slope=SLOPE, new_m=M, radius_step=1, steps_number=DATA['steps_number'],below=DATA['below_depth']/HEIGHT):
     global DATA, SLOPE, M, HEIGHT
 
     HEIGHT=new_height
     SLOPE=new_slope
     M=new_m
+    rmax = max(HEIGHT/(2.5*M*math.tan(math.radians(SLOPE))), HEIGHT)
 
     DATA = {'slope_angle': SLOPE,
             'h': HEIGHT,
-            'radius_range': np.arange(0.5, 2.5 * M * HEIGHT, 3),
+            'radius_range': np.arange(0.5, 2.5 * M * rmax, radius_step),
             'left_right': [M * HEIGHT, 1.5 * M * HEIGHT],
             'slope_coordinates': [(0, 0), (HEIGHT / math.tan(math.radians(SLOPE)), HEIGHT)],
-            'steps_number': 100,
-            'below_depth': 0.5 * HEIGHT,
+            'steps_number': steps_number,
+            'below_depth': below * HEIGHT,
             'density': 18,
             'coordinates': [(-2.6 * HEIGHT, 0), (2 * HEIGHT, HEIGHT)],
             'radius': HEIGHT * 3,
@@ -464,6 +466,9 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
 
                 iter_slope = Cohesive_slope(slope_angle,height,below_level,density,arc_coordinates,slope_coor,radius)
 
+                # check to ignore compound circles
+                #if iter_slope.compound: continue
+
                 #sanity checks for the iter slope
                 if iter_slope.compound:
                     if iter_slope.compound_coor[0][0] < iter_slope.coordinates[0][0]: continue
@@ -489,50 +494,111 @@ def generate_failures(height, slope_angle, steps_number, half_horiz, radius_rang
 
     return critical_slope
 
+# optimizations
+def reverse_slope_coor(circle_cg, radius, height, slope_angle, stype):
+    """returns (i,j): x_coor for land intersection"""
+    point_left = [0,0]
+    point_right = [0,0]
+    if stype == " Base":
+        point_left[1]=0
+        point_right[1]=height
+        point_left[0] = circle_cg[0] - math.sqrt(radius**2-circle_cg[1]**2)
+        point_right[0] = circle_cg[0] + math.sqrt(radius**2-(height-circle_cg[1])**2)
+
+    elif stype == " Toe":
+        point_right = [circle_cg[0] + math.sqrt(radius**2-(height-circle_cg[1])**2), height]
+
+    elif stype == " Slope":
+        horizontal_left = [circle_cg[0] - math.sqrt(radius**2-circle_cg[1]**2), 0]
+        horizontal_right = [circle_cg[0] + math.sqrt(radius**2-(height-circle_cg[1])**2), height]
+
+        alpha = math.tan(math.radians(slope_angle))
+
+        a = 1+alpha**2
+        b = -2*(circle_cg[0]+circle_cg[1]*alpha)
+        c = circle_cg[0]**2+circle_cg[1]**2-radius**2
+
+        slope_left_x = (1/2*a)*(-1*b-math.sqrt(b**2-4*a*c))
+        slope_right_x = (1/2*a)*(-1*b+math.sqrt(b**2-4*a*c))
+
+        slope_left = [slope_left_x, slope_left_x*alpha]
+        slope_right = [slope_right_x, slope_right_x*alpha]
+
+
+        if slope_left[1] < 0: point_left = horizontal_left
+        else: point_left = slope_left
+
+        if slope_right[1] > height: point_right = horizontal_right
+        else: point_right = slope_right
+
+
+    return [point_left, point_right]
+def parse_slope_data(file_name):
+    global HEIGHT
+    """returns a list of slope data present in a csv:
+    depth, slope, m, radius, circle_x, circle_y, ...
+    each entry has [below_depth, angle, m, circle_coor, radius, stype]"""
+
+
+    f = open(file_name, 'r')
+    output = []
+
+    for line in f:
+        lid = line.split(",")
+        #if lid[0] == 'depth': continue
+
+        below_depth = float(lid[0])
+        angle = int(lid[1])
+        m = float(lid[2])
+        radius = float(lid[3])
+        circle_coor = (float(lid[4]), float(lid[5]))
+        stype = lid[6]
+        intersection_coor = reverse_slope_coor(circle_coor, radius, HEIGHT, angle, stype)
+
+
+        output.append([below_depth, angle, m, circle_coor, radius, stype, intersection_coor])
+
+    f.close()
+
+    return output
+
 
 #############################################
 ############## TESTING AREA #################
 #############################################
 
 
-plt.figure(figsize=(15, 7), tight_layout=True)
-plt.axis('off')
+# plt.figure(figsize=(15, 7), tight_layout=True)
+# plt.axis('off')
 
 
-mySlope = generate_failures(DATA['h'],
-                            DATA['slope_angle'],
-                            DATA['steps_number'],
-                            DATA['left_right'],
-                            DATA['radius_range'],
-                            below_level=DATA['below_depth'],
-                            density=DATA['density'])
-
-print(mySlope)
-
-
-
-# for angle in range(10,90,5):
-#     plt.clf()
+# mySlope = generate_failures(DATA['h'],
+#                             DATA['slope_angle'],
+#                             DATA['steps_number'],
+#                             DATA['left_right'],
+#                             DATA['radius_range'],
+#                             below_level=DATA['below_depth'],
+#                             density=DATA['density'])
 #
-#     update_data(new_slope=angle)
+# print(mySlope)
 #
-#     mySlope = generate_failures(DATA['h'],
-#                                 DATA['slope_angle'],
-#                                 DATA['steps_number'],
-#                                 DATA['left_right'],
-#                                 DATA['radius_range'],
-#                                 below_level=DATA['below_depth'],
-#                                 density=DATA['density'])
+
 #
-#     plt.gca().set_aspect('equal', adjustable='box')
-#     plt.xlim(-10,70)
-#     plt.ylim(-1*DATA['below_depth']-1,50)
+# mySlope = slope_enhancer(HEIGHT, 5, 50, (47.94382531217095, 120.82901973795437), 60.8, below_level=1, density=18)
 #
-#     plt.savefig('plots/' + str(angle) + '.png')
+# print(mySlope)
+
+# plot_land(mySlope,True)
+# mySlope.plot_slope(color='blue', width=3, style='solid')
+# mySlope.plot_circle_cg()
+#
+#
+#
+# plt.gca().set_aspect('equal', adjustable='box')
+# plt.axis('off')
+# #plt.ylim(bottom=-1*DATA['below_depth']-1)
+# plt.show()
 
 
 
-plt.gca().set_aspect('equal', adjustable='box')
-plt.axis('off')
-plt.ylim(bottom=-1*DATA['below_depth']-1)
-plt.show()
+
